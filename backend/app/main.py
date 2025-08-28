@@ -1,57 +1,21 @@
-from fastapi import FastAPI, Depends
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+from fastapi import FastAPI
+from .core.config import settings
+from .api.routers import market, signals, trading, models, backtest
 
-from app.core.config import settings
-from app.api.v1 import api_router
-from app.database.connection import get_db
-
-app = FastAPI(
-    title="Market Intelligence Platform API",
-    description="A comprehensive market intelligence and algorithmic trading platform",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-)
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Include API routes
-app.include_router(api_router, prefix="/v1")
-
+app = FastAPI(title="Market Intelligence Platform", version="0.1.0")
 
 @app.get("/health")
-def health_check():
-    """Health check endpoint."""
-    return {
-        "status": "healthy",
-        "service": "market-intel-platform-api",
-        "version": "1.0.0"
-    }
+def health() -> dict[str, str]:
+    return {"status": "ok"}
 
+# Versioned API
+app.include_router(market.router, prefix="/v1")
+app.include_router(signals.router, prefix="/v1")
+app.include_router(trading.router, prefix="/v1")
+app.include_router(models.router, prefix="/v1")
+app.include_router(backtest.router, prefix="/v1")
 
-@app.get("/")
-def root():
-    """Root endpoint."""
-    return {
-        "message": "Market Intelligence Platform API",
-        "version": "1.0.0",
-        "docs_url": "/docs",
-        "health_url": "/health"
-    }
-
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "app.main:app",
-        host=settings.api_host,
-        port=settings.api_port,
-        reload=settings.debug,
-    )
+# Simple startup log
+@app.on_event("startup")
+async def startup_event() -> None:
+    print("Starting Market Intelligence Platform (env=", settings.environment, ")")
