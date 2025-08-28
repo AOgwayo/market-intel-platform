@@ -8,6 +8,7 @@ import asyncio
 import logging
 
 # Add backend to path
+sys.path.append('/opt/airflow')
 sys.path.append('/opt/airflow/backend')
 
 from backend.app.core.config import settings

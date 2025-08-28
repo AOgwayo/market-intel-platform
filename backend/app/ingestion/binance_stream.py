@@ -115,7 +115,7 @@ class BinanceStreamClient:
     
     @backoff.on_exception(
         backoff.expo,
-        (websockets.exceptions.ConnectionClosed, websockets.exceptions.InvalidHandshake),
+        (websockets.ConnectionClosed, websockets.InvalidHandshake),
         max_tries=5,
         max_time=300
     )
@@ -174,7 +174,7 @@ class BinanceStreamClient:
                 if pending_bars:
                     await self._flush_bars_to_db(pending_bars)
                 
-        except websockets.exceptions.ConnectionClosed:
+        except websockets.ConnectionClosed:
             logger.warning("WebSocket connection closed")
             raise
         except Exception as e:
