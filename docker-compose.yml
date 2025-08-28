@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: market_intel
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/market_intel
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app/backend
+      - ./.env:/app/.env
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  airflow-webserver:
+    image: apache/airflow:2.7.3
+    ports:
+      - "8080:8080"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql://postgres:password@db:5432/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    depends_on:
+      - db
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./.env:/opt/airflow/.env
+    command: webserver
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.3
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql://postgres:password@db:5432/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    depends_on:
+      - db
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./.env:/opt/airflow/.env
+    command: scheduler
+
+volumes:
+  postgres_data:
