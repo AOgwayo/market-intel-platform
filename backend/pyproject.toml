@@ -1,0 +1,58 @@
+[tool.poetry]
+name = "market-intel-backend"
+version = "0.1.0"
+description = "Market Intelligence Platform Backend"
+authors = ["Your Name <you@example.com>"]
+package-mode = true
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.111.0"
+uvicorn = {version = "^0.30.0", extras=["standard"]}
+sqlalchemy = "^2.0.29"
+psycopg2-binary = "^2.9.9"
+pydantic = "^2.7.0"
+pydantic-settings = "^2.2.1"
+alembic = "^1.13.1"
+python-dateutil = "^2.9.0.post0"
+numpy = "^1.26.4"
+pandas = "^2.2.2"
+httpx = "^0.27.0"
+redis = "^5.0.4"
+
+# Airflow optional (kept separate to shorten base image build if not needed)
+apache-airflow = {version = "^2.9.1", optional = true}
+
+[tool.poetry.extras]
+airflow = ["apache-airflow"]
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.4.8"
+mypy = "^1.10.0"
+types-requests = "^2.31.0.20240406"
+pytest = "^8.2.1"
+
+[build-system]
+requires = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E","F","I","B","UP","N","S"]
+ignore = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+strict_optional = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
