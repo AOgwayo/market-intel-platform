@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "market-intel"
+version = "0.1.0"
+description = "Market intelligence platform (ingestion, normalization, API)."
+authors = [{name = "AOgwayo"}]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+    "apscheduler>=3.10.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "mypy",
+    "ruff",
+    "types-requests",
+    "anyio",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = 3.11
+warn_unused_configs = True
+disallow_untyped_defs = True
+strict_optional = True
+ignore_missing_imports = True
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "-q"
