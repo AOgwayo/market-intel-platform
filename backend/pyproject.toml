@@ -1,106 +1,58 @@
 [tool.poetry]
-name = "market-intel-platform"
+name = "market-intel-backend"
 version = "0.1.0"
-description = "A comprehensive market intelligence and algorithmic trading platform"
-authors = ["Your Name <your.email@example.com>"]
-readme = "README.md"
+description = "Market Intelligence Platform Backend"
+authors = ["Your Name <you@example.com>"]
+package-mode = true
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.104.1"
-uvicorn = {extras = ["standard"], version = "^0.24.0"}
-pydantic = {extras = ["email"], version = "^2.5.0"}
-pydantic-settings = "^2.1.0"
-sqlalchemy = "^2.0.23"
-alembic = "^1.13.1"
+fastapi = "^0.111.0"
+uvicorn = {version = "^0.30.0", extras=["standard"]}
+sqlalchemy = "^2.0.29"
 psycopg2-binary = "^2.9.9"
-redis = "^5.0.1"
-pandas = "^2.1.4"
-numpy = "^1.25.2"
-scikit-learn = "^1.3.2"
-ta = "^0.10.2"
-requests = "^2.31.0"
-websockets = "^12.0"
-python-multipart = "^0.0.6"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-alpaca-py = "^0.15.0"
-binance-connector = "^3.5.0"
-apache-airflow = "^2.7.3"
-apache-airflow-providers-postgres = "^5.7.1"
+pydantic = "^2.7.0"
+pydantic-settings = "^2.2.1"
+alembic = "^1.13.1"
+python-dateutil = "^2.9.0.post0"
+numpy = "^1.26.4"
+pandas = "^2.2.2"
+httpx = "^0.27.0"
+redis = "^5.0.4"
+
+# Airflow optional (kept separate to shorten base image build if not needed)
+apache-airflow = {version = "^2.9.1", optional = true}
+
+[tool.poetry.extras]
+airflow = ["apache-airflow"]
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
-pytest-asyncio = "^0.21.1"
-pytest-cov = "^4.1.0"
-httpx = "^0.25.2"
-ruff = "^0.1.7"
-mypy = "^1.7.1"
-black = "^23.11.0"
-isort = "^5.12.0"
+ruff = "^0.4.8"
+mypy = "^1.10.0"
+types-requests = "^2.31.0.20240406"
+pytest = "^8.2.1"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.8.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
+line-length = 100
 target-version = "py311"
-line-length = 88
-select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "C",  # flake8-comprehensions
-    "B",  # flake8-bugbear
-    "UP", # pyupgrade
-]
-ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "C901",  # too complex
-]
+select = ["E","F","I","B","UP","N","S"]
+ignore = ["S101"]
 
-[tool.ruff.per-file-ignores]
-"__init__.py" = ["F401"]
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.mypy]
 python_version = "3.11"
-check_untyped_defs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
+warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-warn_return_any = true
+no_implicit_optional = true
 strict_optional = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "-v --cov=app --cov-report=term-missing"
-asyncio_mode = "auto"
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 88
-
-[tool.black]
-line-length = 88
-target-version = ['py311']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | build
-  | dist
-)/
-'''
+check_untyped_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
