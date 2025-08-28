@@ -1,3 +1,3 @@
-# Updated ingestion adapters to use AsyncIterator
-
-# Your code updates go here.
+# Deprecated placeholder file (erroneously added).
+# Real adapters live in backend/src/market_intel/ingestion/.
+# This file retained temporarily to avoid breaking any accidental references.
